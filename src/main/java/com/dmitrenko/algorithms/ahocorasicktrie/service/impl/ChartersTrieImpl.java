@@ -3,7 +3,6 @@ package com.dmitrenko.algorithms.ahocorasicktrie.service.impl;
 import com.dmitrenko.algorithms.ahocorasicktrie.domain.TrieNode;
 import com.dmitrenko.algorithms.ahocorasicktrie.exception.DataFlowException;
 import com.dmitrenko.algorithms.ahocorasicktrie.service.ChartersTrie;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -16,13 +15,12 @@ import static com.dmitrenko.algorithms.ahocorasicktrie.utils.SymbolService.check
 
 @Component
 @Scope("prototype")
-@RequiredArgsConstructor
 public class ChartersTrieImpl implements ChartersTrie {
 
 	private TrieNode root;
 
 	private void init() {
-		root = TrieNode.builder('~').build();
+		root = TrieNode.builder('$').build();
 		TrieNode space = TrieNode.builder('~').parentNode(root).build();
 		root.addChildren(' ', space);
 	}
@@ -91,9 +89,9 @@ public class ChartersTrieImpl implements ChartersTrie {
 	private TrieNode buildSuffixLink(TrieNode node) {
 		if (node.getSuffixLink().isEmpty()) {
 			node.setSuffixLink(
-				node.equals(root) && node.getParentNode().equals(root)
-				? followTheLink(buildSuffixLink(node.getParentNode()), node.getParentChar())
-				: root
+				!node.equals(root) && !node.getParentNode().equals(root) ?
+					followTheLink(buildSuffixLink(node.getParentNode()), node.getParentChar())
+					: root
 			);
 		}
 		return node.getSuffixLink().get();
